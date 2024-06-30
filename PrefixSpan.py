@@ -18,7 +18,7 @@ def read(filename):
     S = []
     with open(filename, 'r') as input:
         for line in input.readlines():
-            elements = line.split(',')      #分隔符
+            elements = line.split(',')     
             s = []
             for e in elements:
                 s.append(e.split())
@@ -30,20 +30,20 @@ class SquencePattern:
     def __init__(self, squence, support):
         self.squence = []
         for s in squence:
-            self.squence.append(list(s))  #元素换成列表
+            self.squence.append(list(s))
         self.support = support
-    def append(self, p):                           #如果第一位是‘_’则remove后再加到squence里面
+    def append(self, p):                          
 
         if p.squence[0][0] == PLACE_HOLDER:
             first_e = p.squence[0]
-            first_e.remove(PLACE_HOLDER)  #将‘_’删掉
+            first_e.remove(PLACE_HOLDER) 
             self.squence[-1].extend(first_e)
             self.squence.extend(p.squence[1:])
         else:
             self.squence.extend(p.squence)
         self.support = min(self.support, p.support)
 
-#threshold  支持度阈值
+#threshold 
 def prefixSpan(pattern, S, threshold):
     gc.disable()
     patterns = []
@@ -108,13 +108,13 @@ def frequent_items(S, pattern, threshold):
                         items[item] = 1
     f_list.extend([SquencePattern([[PLACE_HOLDER, k]], v) for k, v in _items.items() if v >= threshold])
     f_list.extend([SquencePattern([[k]], v) for k, v in items.items() if v >= threshold])
-    sorted_list = sorted(f_list, key=lambda p: p.support)   #lambda是虚拟函数
+    sorted_list = sorted(f_list, key=lambda p: p.support) 
     del f_list
     return sorted_list
 
 def build_projected_database(S, pattern):
     """
-    suppose S is projected database base on pattern's prefix,  pattern是当前的前缀，S为其投影数据库
+    suppose S is projected database base on pattern's prefix
     so we only need to use the last element in pattern to
     build projected database
     """
@@ -160,13 +160,11 @@ def print_patterns(patterns):
         print("pattern:{0}, support:{1}".format(p.squence, p.support))
 
 def get_maxPatterns(patterns):
-   #找support最大的pattern
     max = 0
     for p in patterns:
         if(len(p.squence)>=2 and (['-1'] not in p.squence) and isLegal(p)==1):
             if(p.support >= max):
                 max = p.support
-    #重新遍历 查看是否有相同support的模式；
     patterns_list = []
     for p in patterns:
         if((p.support == max) and (len(p.squence)>=2) and (['-1'] not in p.squence) and isLegal(p)==1):
