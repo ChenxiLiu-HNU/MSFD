@@ -11,18 +11,18 @@ import numpy as np
 import pandas as pd
 from sklearn.cluster import KMeans
 
-PATH_FIG = r"C:\Users\58393\Desktop\H-paper\exp\Figure"
-PATH_OUT  = r"C:\Users\58393\Desktop\H-paper\exp"
+PATH_FIG = r"/figs"
+PATH_OUT  = r"/exp"
 
-# file_out = os.path.join(PATH_OUT, '深圳市车辆模式比例.csv')
+# file_out = os.path.join(PATH_OUT, 'shenzhen_pattern.csv')
 # temp = pd.read_csv(file_out)
 # len1 = len(temp)
-# temp = temp[temp['比例']<70]
+# temp = temp[temp['percentage']<70]
 # temp = temp[temp['label']==1]
 # len2 = len(temp)
 # print(len2/len1)
 
-#coords = [temp['比例']]
+#coords = [temp['percentage']]
 
 # coords = [temp['aver_ntrip'], temp['aver_dtrip'],temp['aver_trip'],temp['ent_time']
 #               ,temp['n_cluster'],temp['aver_tstop']]
@@ -32,7 +32,7 @@ PATH_OUT  = r"C:\Users\58393\Desktop\H-paper\exp"
 # s = clf.fit(feature)
 # temp['label'] = s.labels_
 # temp.to_csv(file_out)
-file_out = os.path.join(PATH_OUT, '所有数据特征集合.csv')
+file_out = os.path.join(PATH_OUT, 'all_feature.csv')
 temp = pd.read_csv(file_out,index_col=0)
 
 IR_objectid = [404829,179863,380227,555761,402511,382789,123212,382754,578670,555840,
@@ -75,6 +75,6 @@ plt.xlabel("aver_tstop(hour)")
 plt.ylabel("pdf")
 plt.legend()
 #plt.show()
-plt.savefig(os.path.join(PATH_FIG,'图5-4(aver_tstop).png'))
+plt.savefig(os.path.join(PATH_FIG,'Fig-5-4(aver_tstop).png'))
 plt.show()
 plt.close()
