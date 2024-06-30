@@ -6,8 +6,8 @@ import numpy as np
 import pandas as pd
 from fitter import Fitter
 
-PATH_IN  = "F:/大论文/实验/Data"
-PATH_OUT = "F:/大论文/实验/Data"
+PATH_IN  = "/Data"
+PATH_OUT = "/Data"
 
 """
 distribution = ['beta','burr', 'expon', 'exponnorm', 'exponpow', 'exponweib','gamma',
@@ -41,7 +41,7 @@ if __name__ =="__main__":
     #data_duringtime = list(temp[temp['DuringTime']<=1000].DuringTime)
     # data_rg = temp['Rg']
     x = data_distance
-    bin_num = math.ceil(math.sqrt(len(x)))  #获取分组数
+    bin_num = math.ceil(math.sqrt(len(x)))
     print(bin_num)
     #n,bins,patches = plt.hist(x,bins=bin_num, facecolor='yellowgreen', edgecolor='purple', density=True)
     #fitterData(x,bin_num)
