@@ -13,13 +13,10 @@ work_days6 = [1,2,4,5,6,7,8,9,11,12,13,14,15,16,18,19,20,21,22,23,25,26,27,28,29
 week_days2 = [2,3,9,10,16,17,23,24,30,31]
 week_day = [3,10,17,24,31]
 
-
-PATH_IN  = r"C:\Users\58393\Desktop\H-paper\exp\Data"
-PATH_OUT = r"C:\Users\58393\Desktop\H-paper\exp"
-
+PATH_IN  = r"path_in"
+PATH_OUT = r"path_out"
 
 def distance(lat1,lon1, lat2,lon2):
-    """计算两经纬度之间的距离,返回值单位：km"""
     r = 6371.0088
     def radians(d):
         return d * math.pi / 180.0
@@ -36,7 +33,6 @@ def daoDataBase(base_name,table_name):
     sql = "select * from" +" " +table_name
     return engine,sql
 
-"""预处理操作:添加距离、时长"""
 def propress_dt(filename):
     file = os.path.join(PATH_IN,filename)
     print(file)
@@ -56,14 +52,12 @@ def propress_dt(filename):
                                              data.loc[i,'StopLat'],
                                              data.loc[i,'StopLon'])
         data.loc[i, 'TravelTime'] = SpentTime
-        print("第" + str(i) + "行: ", data.loc[i, 'TravelTime'], data.loc[i, 'Distance'])
-        #print("第" + str(i) + "行: ",data.loc[i,'TravelTime'])
+        print(str(i), data.loc[i, 'TravelTime'], data.loc[i, 'Distance'])
     #outfile = os.path.join(PATH_OUT,outfile)
     #outfile = os.path.join(PATH_IN,filename)
     print(data)
     data.to_csv(file)
 
-"""预处理操作：按id拆分表格"""
 def propress_id(path_in,file,path_out):
 
     filename = os.path.join(path_in,file)
@@ -131,12 +125,6 @@ def getDay(temp):
               len(set(temp_seven['StartTime'].dt.day))+len(set(temp_eight['StartTime'].dt.day))
     return(day_len)
 
-"""
-出行需求的分析
-path_in:车辆工作日的行程文件夹
-path_in:车辆周末的行程文件夹 
-outname:输出图片名称
-"""
 def sta_traFre(path_in1,path_in2,outname):
 
     filenames1 = os.listdir(path_in1)
@@ -201,12 +189,6 @@ def sta_traFre(path_in1,path_in2,outname):
     plt.close()
     """
 
-
-"""
-出行时刻的分析
-filename1: 工作日行程文件
-filename2: 周末行程文件
-"""
 def sta_time(filename1,filename2,outname):
 
     file1 = os.path.join(PATH_IN,filename1)
@@ -223,7 +205,6 @@ def sta_time(filename1,filename2,outname):
     data2['Hour'] = data2['StartTime'].dt.hour
     data2_num = len(data2)
 
-    """统计：这个时段的行程占总行程的比值"""
     outcome1 = [0]*24
     outcome2 = [0]*24
     time = np.arange(0,24,1)
@@ -244,8 +225,7 @@ def sta_time(filename1,filename2,outname):
     print(outcome2)
 
     """
-    画图
-    plt.rcParams['font.sans-serif'] = ['SimHei']  # 步骤一(替换sans-serif字体)
+    plt.rcParams['font.sans-serif'] = ['SimHei']
     plt.rcParams['axes.unicode_minus'] = False
     #bar_width = 0.4
     # plt.bar(time,outcome1,bar_width,label='weekdays')
@@ -262,7 +242,6 @@ def sta_time(filename1,filename2,outname):
     plt.close()
     """
 
-"""出行距离的分析"""
 def sta_dist(filename,outname):
 
     file = os.path.join(PATH_IN,filename)
@@ -287,17 +266,13 @@ def sta_dist(filename,outname):
 
     """
     langs = ['<5km', '5-10km', '10-15km', '15-20km', '>20km']
-    plt.rcParams['font.sans-serif'] = ['SimHei']  # 步骤一(替换sans-serif字体)
+    plt.rcParams['font.sans-serif'] = ['SimHei']
     plt.rcParams['axes.unicode_minus'] = False
     plt.pie(p1, labels=langs, autopct='%1.2f%%')
     plt.savefig(outfile)
     plt.close()
     """
 
-"""出行时长的分析
-path_in:文件路径
-filename:文件名
-"""
 def sta_tradura(path_in,filename):
 
     file = os.path.join(path_in,filename)
@@ -329,7 +304,7 @@ def sta_tradura(path_in,filename):
     print(filename,average_duration)
     """
     langs = ['<15min', '15-30min', '30-45min', '45-60min', '>1hour']
-    plt.rcParams['font.sans-serif'] = ['SimHei']  # 步骤一(替换sans-serif字体)
+    plt.rcParams['font.sans-serif'] = ['SimHei']
     plt.rcParams['axes.unicode_minus'] = False
     plt.pie(p, labels=langs, autopct='%1.2f%%')
     plt.savefig(os.path.join(PATH_OUT,outname))
@@ -337,7 +312,6 @@ def sta_tradura(path_in,filename):
     plt.close()
     """
 
-"""拥塞"""
 def sta_conges(filename1,filename2):
     #filenames = os.listdir(PATH_IN)
     dist_times = {5:15,10:30,15:45,20:60}
@@ -388,7 +362,6 @@ def sta_conges(filename1,filename2):
     plt.savefig(os.path.join(PATH_OUT,filename1[:-11])+'_cogest.png')
     plt.close()
 
-
 def getSDay(temp):
 
     temp['sTime'] = pd.to_datetime(temp['sTime'])
@@ -398,12 +371,10 @@ def getSDay(temp):
     temp_six['sTime']   = pd.to_datetime(temp_six['sTime'])
     temp_seven['sTime'] = pd.to_datetime(temp_seven['sTime'])
     temp_eight['sTime'] = pd.to_datetime(temp_eight['sTime'])
-    #天数
     day_len = len(set(temp_six['sTime'].dt.day))+\
               len(set(temp_seven['sTime'].dt.day))+len(set(temp_eight['sTime'].dt.day))
     return(day_len)
 
-"""停等区域统计"""
 def sta_staypoint(path_in1,path_in2):
     filenames1 = os.listdir(path_in1)
     filenames2 = os.listdir(path_in2)
@@ -450,7 +421,6 @@ def sta_staypoint(path_in1,path_in2):
     print(x1, y1)
     print(x2, y2)
 
-"""停等时刻"""
 def sta_staytime(filename1,filename2):
 
     file1 = os.path.join(PATH_IN, filename1)
@@ -466,7 +436,6 @@ def sta_staytime(filename1,filename2):
     data2['Hour'] = data2['sTime'].dt.hour
     data2_num = len(data2)
 
-    """统计：这个时段的行程占总行程的比值"""
     outcome1 = [0] * 24
     outcome2 = [0] * 24
     time = np.arange(0, 24, 1)
@@ -486,7 +455,6 @@ def sta_staytime(filename1,filename2):
     print(outcome1)
     print(outcome2)
 
-"""停等时长"""
 def sta_staydura(path_in,filename):
 
     file = os.path.join(path_in,filename)
@@ -495,7 +463,7 @@ def sta_staydura(path_in,filename):
     sum_duration = sum(duration)
     data_num = len(data)
     average_duration = sum_duration / data_num / 60
-    print("平均停等时长：",average_duration)
+    print(average_duration)
     #"""
     p = [0] * 4
     for i in range(1,len(duration)+1):
@@ -535,7 +503,7 @@ def sta_staydura(path_in,filename):
     print(p)
     """
     # langs = ['<15min', '15-30min', '30-45min', '45-60min', '>1hour']
-    # plt.rcParams['font.sans-serif'] = ['SimHei']  # 步骤一(替换sans-serif字体)
+    # plt.rcParams['font.sans-serif'] = ['SimHei']
     # plt.rcParams['axes.unicode_minus'] = False
     # plt.pie(p, labels=langs, autopct='%1.2f%%')
     # plt.savefig(os.path.join(PATH_OUT,outname))
@@ -545,47 +513,20 @@ def sta_staydura(path_in,filename):
 
 if __name__ == "__main__":
 
-    propress_id("E:/数据/GPS",'std07.csv',"E:/数据/gps_id07")
-    #propress_id("F:/大论文/实验/Data",'sz_rest.csv',"F:/大论文/实验/Data/sz_rest")
-    # propress_merge("F:/大论文/实验/Data/sz_work_stop","F:/大论文/实验/Data",'sz_work_stop.csv')
-    # propress_merge("F:/大论文/实验/Data/sz_rest_stop","F:/大论文/实验/Data",'sz_rest_stop.csv')
+    propress_id("path")
 
-    """出行频率"""
-    #sta_traFre("F:/大论文/实验/Data/sz_work","F:/大论文/实验/Data/sz_rest",'Fig3.1.png')
-
-    """出行时刻"""
-    #sta_time("sz_work.csv","sz_rest.csv",'Fig3.2.png')
-
-    """出行距离"""
-    # sta_dist("sz_work.csv","Fig.3.4(a).png")
-    # sta_dist('sz_rest.csv',"Fig.3.5(a).png")
-
-    """出行时长"""
-    # path_in = "F:/大论文/实验/Data/sz_time"
-    # filenames = os.listdir(path_in)
-    # for filename in filenames:
-    #     sta_tradura(path_in,filename)
-    #sta_tradura("F:/大论文/实验/Data","sz_weekend1.csv")
-
-    """停等点分布"""
-    #sta_staypoint("F:/大论文/实验/Data/sz_work_stop","F:/大论文/实验/Data/sz_rest_stop")
-
-    """停等时刻"""
-    #sta_staytime("F:/大论文/实验/Data/sz_work_stop.csv","F:/大论文/实验/Data/sz_rest_stop.csv")
-
-    """停等时长"""
     # sta_staydura(PATH_IN,'sz_work_stop.csv')
     # sta_staydura(PATH_IN,'sz_rest_stop.csv')
     """
-    PATH_WORK = "F:/大论文/实验/data/sz_work_stop"
-    PATH_REST = "F:/大论文/实验/data/sz_rest_stop"
+    PATH_WORK = "/data/sz_work_stop"
+    PATH_REST = "/data/sz_rest_stop"
  
     filenames = os.listdir(PATH_WORK)
     filenames.sort(key=lambda x: int(x[:-4]))
     file_out1 = os.path.join(PATH_OUT, 'rg_work.csv')
     f = open(file_out1, 'a', encoding='utf-8',newline='')
     csv_writer = csv.writer(f)
-    # 3. 构建列表头
+
     csv_writer.writerow(["ObjectID","Rg"])
     f.close()
     for filename in filenames:
@@ -600,7 +541,7 @@ if __name__ == "__main__":
     file_out2 = os.path.join(PATH_OUT,'rg_rest.csv')
     f2 = open(file_out2, 'a', encoding='utf-8', newline='')
     csv_writer = csv.writer(f2)
-    # 3. 构建列表头
+
     csv_writer.writerow(["ObjectID", "Rg"])
     f2.close()
     for filename in filenames2:
@@ -610,5 +551,3 @@ if __name__ == "__main__":
         csv.writer(f3).writerow([filename[:-4], Rg])
         f3.close()
     """
-
-
