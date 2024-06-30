@@ -9,10 +9,9 @@ import copy
 import csv
 import PrefixSpan
 
-PATH_IN = r"C:\Users\58393\Desktop\H-paper\expData\sz_work_经纬度相连"
-PATH_OUT = r"C:\Users\58393\Desktop\H-paper\exp"
+PATH_IN = r"your_path_in"
+PATH_OUT = r"your_path_out"
 
-"""将轨迹按照日期切分"""
 def get_file(temp):
 
     length = len(temp)
@@ -20,7 +19,6 @@ def get_file(temp):
     for i in range(1, length + 1):
         temp.loc[i, 'time_day'] = temp.loc[i, 'Time'].split(' ', 2)[0]
     day_list = []
-    # 获取日期列表
     for i in range(1, length + 1):
         day_list.append(temp.loc[i, 'time_day'])
     day_list = list(set(day_list))
@@ -33,11 +31,11 @@ def get_file(temp):
     for i in range(1, length + 1):
         BeginIndex = day_list.index(temp.loc[i, 'time_day'])
         data_list[BeginIndex].append(temp.loc[i, 'labels'])
-    travel_length = len(data_list)  # 模式总数量
+    travel_length = len(data_list)  # Total number of patterns
     file = []
     for i in range(len(data_list)):
-        s = str(data_list[i]).replace('[', '').replace(']', '')  # 去除[],这两行按数据不同，可以选择
-        s = s.replace("'", '').replace(',', '')  # 去除单引号，逗号，每行末尾追加换行符
+        s = str(data_list[i]).replace('[', '').replace(']', '')  # delete [],
+        s = s.replace("'", '').replace(',', '')
         file.append(s)
     return file, travel_length
 
@@ -69,12 +67,12 @@ if __name__ == "__main__":
     # Time Lon Lat labels time Tlabels
     #117935.csv,121266.csv,128209.csv,184799.csv,402548.csv,533760.csv,551239.csv
     #551241.csv,569697.csv,569697.csv
-    file_out = os.path.join(PATH_OUT,'深圳市车辆模式比例.csv')
+    file_out = os.path.join(PATH_OUT,'shenzhen.csv')
 
     """
     f = open(file_out, 'a', encoding='utf-8', newline='')
     csv_writer = csv.writer(f)
-    csv_writer.writerow(['编号','比例'])
+    csv_writer.writerow(['number','percentage'])
     f.close()
     """
     filenames = os.listdir(PATH_IN)
@@ -93,5 +91,3 @@ if __name__ == "__main__":
             # f1 = open(file_out, 'a', encoding='utf-8', newline='')
             # csv.writer(f1).writerow([filename[:-4],propo])
             # f1.close()
-
-
