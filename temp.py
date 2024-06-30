@@ -11,17 +11,15 @@ import pymysql
 from scipy.optimize import curve_fit
 from sqlalchemy import create_engine
 
-PATH_WORK = "F:/大论文/实验/Data/sz_work"
-PATH_REST = "F:/大论文/实验/Data/sz_rest"
-PATH_IN   = "F:/大论文/实验/Data/sz_work"
-PATH_IN2  = "F:/大论文/实验/Data/sz_work_经纬度相连"
-# PATH_IN1   = "F:/大论文/实验/Data/规律车辆id/sz_work_规律"
-# PATH_IN2  = "F:/大论文/实验/Data/规律车辆id/sz_work_经纬度相连_规律id"
-PATH_OUT  = "F:/大论文/实验/Data/sz_id~"  #剔除行程小于0.5km的数据
-
+PATH_WORK = "/Data/sz_work"
+PATH_REST = "/Data/sz_rest"
+PATH_IN   = "/Data/sz_work"
+PATH_IN2  = "/Data/sz_work_lon_lat"
+# PATH_IN1   = "/Data/id/sz_work"
+# PATH_IN2  = "/Data/id/sz_work_id"
+PATH_OUT  = "Data/sz_id~"
 
 def distance(lat1,lon1, lat2,lon2):
-    """计算两经纬度之间的距离,返回值单位：km"""
     r = 6371.0088
     def radians(d):
         return d * math.pi / 180.0
@@ -33,7 +31,7 @@ def distance(lat1,lon1, lat2,lon2):
     distance = c * r
     return distance
 
-PATH = "F:/大论文/实验/Data/sz_id"
+PATH = "/Data/sz_id"
 filenames = os.listdir(PATH)
 v = 2
 for filename in filenames:
@@ -50,8 +48,6 @@ for filename in filenames:
     x2 = len(temp)
 
     print(x1, x2)
-
-
 
 # for i in range(2,len(temp)+1):
 # #     if(temp.loc[i,'Speed']==0 and temp.loc[i-1,'Speed']==0):
@@ -110,7 +106,6 @@ filenames.sort(key=lambda x: int(x[:-4]))
         # des_file = os.path.join(PATH_IN1,filename)
         # shutil.copy(src_file,des_file)
 
-
 for filename in filenames:
         file = os.path.join(PATH_IN,filename)
         file2 = os.path.join(PATH_IN2,filename)
@@ -130,7 +125,6 @@ for filename in filenames:
         else:
                 des_file = os.path.join(PATH_OUT,filename)
                 shutil.move(file2,des_file)
-
 
 filenames = os.listdir(PATH_IN)
 filenames.sort(key=lambda x: int(x[:-4]))
@@ -177,7 +171,6 @@ for filename in filenames:
         seconds = float((time.split(":", 2))[2])
         SpentTime = day * 24 * 60 + hour * 60 + min + seconds / 60
         temp.loc[i,'DuringTime'] = SpentTime
-        #print("第" + str(i) + "行: ", temp.loc[i, 'DuringTime'],temp.loc[i,'IsSunday'])
     temp.rename(columns={'DuringTime': 'TravelTime'}, inplace=True)
 
     temp_work = temp[temp['IsSunday']==0]
@@ -196,13 +189,11 @@ for filename in filenames:
 record = pd.DataFrame(index=['ObjectID','Day','Frequency'])
 print(record)
 i = 0
-file_out = os.path.join(PATH_OUT, '深圳市车辆数据统计表_工作日.csv')
+file_out = os.path.join(PATH_OUT, 'sz_workday.csv')
 f = open(file_out, 'a', encoding='utf-8',newline='')
 csv_writer = csv.writer(f)
 f.close()
 
-
-# file_out = os.path.join(PATH_OUT, '车辆数据统计表_工作日.csv')
 # temp = pd.read_csv(file_out)
 # print(len(temp[temp.Day>=30]))
 
@@ -224,15 +215,6 @@ for filename in filenames:
         f1 = open(file_out, 'a', encoding='utf-8', newline='')
         csv.writer(f1).writerow([filename[:-4],Day,Fre])
         f1.close()
-
-# record = pd.DataFrame(index=['ObjectID','Day','Frequency'])
-# print(record)
-# i = 0
-# file_out = os.path.join(PATH_OUT, '车辆数据统计表_周末.csv')
-# f = open(file_out, 'a', encoding='utf-8',newline='')
-# csv_writer = csv.writer(f)
-# f.close()
-
 
 # PATH_IN = PATH_REST
 # filenames = os.listdir(PATH_IN)
