@@ -14,10 +14,10 @@ import PrefixSpan
 import copy
 import sys
 
-PATH_MOVE = r"C:\Users\58393\Desktop\H-paper\exp\Data\sz_work"
-PATH_STOP = r"C:\Users\58393\Desktop\H-paper\exp\Data\sz_work_stop"
-PATH_IN = r"C:\Users\58393\Desktop\H-paper\exp\Data\sz_work_经纬度相连"
-PATH_OUT  = r"C:\Users\58393\Desktop\H-paper\exp
+PATH_MOVE = r"path_move"
+PATH_STOP = r"path_stop"
+PATH_IN = r"path_in"
+PATH_OUT  = r"path_out"
 
 IR_objectid = [404829,179863,380227,555761,402511,382789,123212,382754,578670,555840,
                182040,384090,118229,479839,556867,562712,574678,400072,555832,561725,
@@ -42,7 +42,6 @@ Re_ObjectId = [121266,184799,533760,551239,551241,569697,400762,402500,123474,37
                548467,578258, 542936]
 
 def get_day(temp):
-    """获取行程的天数"""
     temp['StartTime'] = pd.to_datetime(temp['StartTime'])
     temp_six = temp[temp['StartTime'].dt.month == 6]
     temp_seven = temp[temp['StartTime'].dt.month == 7]
@@ -50,13 +49,11 @@ def get_day(temp):
     temp_six['StartTime'] = pd.to_datetime(temp_six['StartTime'])
     temp_seven['StartTime'] = pd.to_datetime(temp_seven['StartTime'])
     temp_eight['StartTime'] = pd.to_datetime(temp_eight['StartTime'])
-    # 天数
     day_len = len(set(temp_six['StartTime'].dt.day)) + \
               len(set(temp_seven['StartTime'].dt.day)) + len(set(temp_eight['StartTime'].dt.day))
     return day_len
 
 def get_entropy(temp):
-    """计算时间序列的熵率"""
     hour_list = np.arange(0,24)
     p_list = [0]*24
     temp['StartTime'] = pd.to_datetime(temp['StartTime'])
@@ -84,9 +81,7 @@ def distance(lat1, lon1, lat2,lon2):
     def radians(d):
         return d * math.pi / 180.0
     r = 6371.0088
-    """
-    计算两经纬度之间的距离,返回值单位：km
-    """
+
     lon1, lat1, lon2, lat2 = map(radians, [lon1, lat1, lon2, lat2])
     dlon = lon2 - lon1
     dlat = lat2 - lat1
@@ -114,7 +109,6 @@ def get_rg(temp):
     rg = sqrt(sumdist / len(temp) / sum(spentTime))
     return rg
 
-"""将轨迹按照日期切分"""
 def get_file(temp):
 
     length = len(temp)
@@ -122,7 +116,6 @@ def get_file(temp):
     for i in range(1, length + 1):
         temp.loc[i, 'time_day'] = temp.loc[i, 'Time'].split(' ', 2)[0]
     day_list = []
-    # 获取日期列表
     for i in range(1, length + 1):
         day_list.append(temp.loc[i, 'time_day'])
     day_list = list(set(day_list))
@@ -135,11 +128,11 @@ def get_file(temp):
     for i in range(1, length + 1):
         BeginIndex = day_list.index(temp.loc[i, 'time_day'])
         data_list[BeginIndex].append(temp.loc[i, 'labels'])
-    travel_length = len(data_list)  # 模式总数量
+    travel_length = len(data_list)  
     file = []
     for i in range(len(data_list)):
-        s = str(data_list[i]).replace('[', '').replace(']', '')  # 去除[],这两行按数据不同，可以选择
-        s = s.replace("'", '').replace(',', '')  # 去除单引号，逗号，每行末尾追加换行符
+        s = str(data_list[i]).replace('[', '').replace(']', '') 
+        s = s.replace("'", '').replace(',', '')
         file.append(s)
     return file, travel_length
 
@@ -178,7 +171,6 @@ def get_propo(path,filename):
     return propo
 
 def get_move(path,filename):
-    """获取移动特征"""
     #file = os.path.join(path,str(filename)+'.csv')
     file = os.path.join(path, filename)
     print("processing:",file)
@@ -194,7 +186,6 @@ def get_move(path,filename):
     return aver_ntrip,aver_dtrip,aver_ttrip,ent_time,n_cluster
 
 def get_stop(path,filename):
-    """获取停等特征"""
     #file = os.path.join(path, str(filename) + '.csv')
     file = os.path.join(path,filename)
     print("processing:", file)
@@ -205,7 +196,6 @@ def get_stop(path,filename):
     return aver_tstop
 
 def ana_Attri(path_in,filename):
-
     file = os.path.join(path_in,filename)
     print("processing:",file)
     temp = pd.read_csv(file,index_col=0)
@@ -223,26 +213,16 @@ def ana_Attri(path_in,filename):
         # print(set(temp_six['StartTime'].dt.day))
         #         # print(set(temp_seven['StartTime'].dt.day))
         #         # print(set(temp_eight['StartTime'].dt.day))
-    #天数
     day_len = len(set(temp_six['StartTime'].dt.day))+\
                   len(set(temp_seven['StartTime'].dt.day))+len(set(temp_eight['StartTime'].dt.day))
-    #空间簇数
     clu_num = len(set(label_list))-1
-    #点总数
     point_num = len(temp)*2
-    #总行程数
     trip_num = len(temp)
-    #平均行程数
     avertrip = trip_num//day_len
-    #起点是-1的行程
     acc_tripO = len(temp[temp['Slabel']==-1])
-    #终点是-1的行程
     acc_tripD = len(temp[temp['Elabel']==-1])
-    #离心点数目
     acc_num = acc_tripO+acc_tripD
-    #非离心点行程
     no_acc_num = 0
-    #时间簇数
     #tclu_num = len(set(label_list2))-1
 
     for i in range(1,len(temp)+1):
@@ -258,7 +238,7 @@ def ana_Attri(path_in,filename):
 
 if __name__ == "__main__":
 
-    file_out = os.path.join(PATH_OUT, '所有数据特征集合.csv')
+    file_out = os.path.join(PATH_OUT, all_feature_set.csv')
     temp = pd.read_csv(file_out)
     for i in range(len(temp)):
         temp.loc[i,'ObjectID'] = temp.loc[i,'ObjectID'][:-4]
@@ -333,7 +313,7 @@ if __name__ == "__main__":
         # temp['Day'] = temp['StartTime'].dt.day
         # for i in range(0,2):
         #     lenth = len(temp[temp['labels']==i])
-        #     print("标签为"+str(i)+"的点个数"+str(lenth)+"个")
+        #     print(str(i)+str(lenth))
         temp['Time'] = pd.to_datetime(temp['Time'])
         temp['Month'] = temp['Time'].dt.month
         #temp = temp[temp['Month'] ==6]
@@ -370,7 +350,7 @@ if __name__ == "__main__":
         #plt.savefig(os.path.join(PATH_OUT,'图5-2(b).png'))
         plt.close()
 
-    file_out = os.path.join(PATH_OUT,'深圳市所有车辆统计表_工作日2.csv')
+    file_out = os.path.join(PATH_OUT,'shenzhen_workday.csv')
     temp = pd.read_csv(file_out)
     temp = temp.head(120)
     ObjectId = temp['ObjectID']
@@ -381,5 +361,3 @@ if __name__ == "__main__":
         des_file = os.path.join(PATH_IN,str(objectid)+'.csv')
         shutil.copy(src_file,des_file)
     """
-
-
