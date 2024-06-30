@@ -5,7 +5,7 @@ import numpy as np
 import seaborn as sns
 from folium.plugins import HeatMap
 
-PATH = r"C:\Users\58393\Desktop\H-paper\exp\data"
+PATH = r"\exp\data"
 file = os.path.join(PATH,"20160678.csv")
 temp = pd.read_csv(file)
 print(temp.columns.values.tolist())
